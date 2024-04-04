@@ -46,3 +46,16 @@ std::pair<int, int> hasPairWithSum(const std::vector<int>& arr, int target) {
     // If no potential candidate is found, return -1
     return {-1, 0};
 }
+
+int main() {
+    // Example array sorted in ascending order
+    std::vector<int> arr = {1, 3, 9, 20, 40, 83, 153};
+    int target = 84; // Example target sum
+    auto pair = hasPairWithSum(arr, target);
+    if (pair.first != -1) {
+        std::cout << "Pair found with sum " << target << ": " << pair.first << ", " << pair.second << std::endl;
+    } else {
+        std::cout << "No pair found with sum " << target << std::endl;
+    }
+    return 0;
+}
