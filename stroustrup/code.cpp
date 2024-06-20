@@ -4,6 +4,26 @@
 #include <iostream>
 using namespace std;
 
+enum class trafficLight
+{
+    green,
+    yellow,
+    red
+} light;
+
+trafficLight& operator++(trafficLight &t)
+{
+    switch (t)
+    {
+    case trafficLight::green:
+        return t = trafficLight::yellow;
+    case trafficLight::yellow:
+        return t = trafficLight::red;
+    case trafficLight::red:
+        return t = trafficLight::green;
+    }
+};
+
 int main()
 {
     enum aaa
@@ -18,20 +38,12 @@ int main()
         Green,
         Blue
     };
-    enum class Color2
-    {
-        Red,
-        Black,
-        White
-    };
     enum class eyecolor : char
     {
         blue = 's',
         green,
         brown
     } Eye;
-
-    int Green = 10;
 
     Color x = Color::Green;
 
@@ -40,8 +52,12 @@ int main()
     else
         cout << "It's not Red\n";
 
-    cout << int(x);
-    cout << char(eyecolor::green);
+    trafficLight Light = trafficLight::yellow;
+    trafficLight next = ++Light;
+
+    cout << int(x) << endl;
+    cout << char(eyecolor::green) << endl;
+    cout << int(trafficLight::yellow) << endl << int(Light) << endl << int(next);
 
     return 0;
 }
