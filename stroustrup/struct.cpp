@@ -23,15 +23,19 @@ float read_and_sum(int s)
 {
     Vector v;
     vector_init(v, s); // allocate s elements for v
+
     for (int i = 0; i != s; ++i)
     {
         cout << "Enter a number:\t";
         cin >> v.elem[i]; // read into elements
     }
+
     float sum = 0;
     for (int i = 0; i != s; ++i)
         sum += v.elem[i]; // take the sum of the elements
+
     vector_free(v);
+    
     return sum;
 }
 
