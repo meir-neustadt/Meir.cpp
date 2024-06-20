@@ -6,23 +6,42 @@ using namespace std;
 
 int main()
 {
-    typedef enum {a, b, c} A; 
-	enum class Color { Red = 2,
-					Green,
-					Blue };
-	enum class Color2 { Red,
-						Black,
-						White };
-	int Green = 10;
+    enum aaa
+    {
+        a,
+        b,
+        c
+    } A;
+    enum class Color
+    {
+        Red = 2,
+        Green,
+        Blue
+    };
+    enum class Color2
+    {
+        Red,
+        Black,
+        White
+    };
+    enum class eyecolor : char
+    {
+        blue = 's',
+        green,
+        brown
+    } Eye;
 
-	Color x = Color::Green;
+    int Green = 10;
 
-	if (x == Color::Red)
-		cout << "It's Red\n";
-	else
-		cout << "It's not Red\n";
+    Color x = Color::Green;
 
-	cout << int(x);
+    if (x == Color::Red)
+        cout << "It's Red\n";
+    else
+        cout << "It's not Red\n";
 
-	return 0;
+    cout << int(x);
+    cout << char(eyecolor::green);
+
+    return 0;
 }
