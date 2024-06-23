@@ -7,7 +7,12 @@ class Vector
 {
 public:
     Vector(int s) : elem{new float[s]}, sz{s} {}
-    float& operator[](int i) { return elem[i]; }
+    float &operator[](int i)
+    {
+        if (i < 0 || sz <= i)
+            throw out_of_range{"Vector::operator[]"};
+        return elem[i];
+    }
     int size() { return sz; }
 
 private:
@@ -15,7 +20,8 @@ private:
     int sz;      // the number of elements
 };
 
-namespace myCode{
+namespace myCode
+{
     // int& operator+(int n1, int n2){
     //     return n1+n2;
     // }
@@ -27,6 +33,16 @@ int main()
     int a = 5;
     Vector v(5);
     v[1] = 5.789;
+    try
+    {
+        v[8] = 7;
+    } catch (const out_of_range& e)
+    {
+        cout << e.what() << '\n';
+    }
+
     using namespace myCode;
-    cout << v[1] << '\n' << a << '\n' << myCode::a;
+    cout << v[1] << '\n'
+         << a << '\n'
+         << myCode::a;
 }
