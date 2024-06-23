@@ -15,10 +15,18 @@ private:
     int sz;      // the number of elements
 };
 
+namespace myCode{
+    // int& operator+(int n1, int n2){
+    //     return n1+n2;
+    // }
+    int a = 10;
+}
 
 int main()
 {
+    int a = 5;
     Vector v(5);
     v[1] = 5.789;
-    cout << v[1] << '\n';
+    using namespace myCode;
+    cout << v[1] << '\n' << a << '\n' << myCode::a;
 }
