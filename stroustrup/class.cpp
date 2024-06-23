@@ -28,21 +28,33 @@ namespace myCode
     int a = 10;
 }
 
-int main()
+int main(int argc, char* argv[])
 {
     int a = 5;
-    Vector v(5);
-    v[1] = 5.789;
     try
     {
-        v[8] = 7;
-    } catch (const out_of_range& e)
+        Vector v(atoi(argv[1]));
+        v[1] = 5.789;
+        try
+        {
+            v[8] = 7;
+        }
+        catch (out_of_range &e)
+        {
+            cout << e.what() << '\n';
+        }
+
+        using namespace myCode;
+        cout << v[1] << '\n'
+             << a << '\n'
+             << myCode::a;
+    }
+    catch (length_error &e)
     {
         cout << e.what() << '\n';
     }
-
-    using namespace myCode;
-    cout << v[1] << '\n'
-         << a << '\n'
-         << myCode::a;
+    catch (bad_alloc &e)
+    {
+        cout << e.what() << '\n';
+    }
 }
