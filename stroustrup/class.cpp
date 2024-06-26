@@ -1,5 +1,5 @@
 #include <iostream>
-//#include "meir@cpp.h"
+// #include "meir@cpp.h"
 
 using namespace std;
 
@@ -7,6 +7,12 @@ class Vector
 {
 public:
     Vector(int s) : elem{new float[s]}, sz{s} {}
+    Vector(initializer_list<float> el) : elem{new float[el.size()]}, sz{el.size()} {
+        copy(el.begin(), el.end(), elem);
+    }
+    ~Vector(){
+        delete[] elem;
+    }
     float &operator[](int i)
     {
         if (i < 0 || sz <= i)
@@ -28,12 +34,13 @@ namespace myCode
     int a = 10;
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int a = 5;
     try
     {
         Vector v(atoi(argv[1]));
+        Vector vc = {2.345,5.678};
         v[1] = 5.789;
         try
         {
