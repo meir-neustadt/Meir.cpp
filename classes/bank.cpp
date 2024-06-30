@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 #include <ctime>
+#include <vector>
+#include <algorithm>
 
 #define MIN_ACCOUNT_NUMBER 10000
 #define MAX_ACCOUNT_NUMBER 99999
@@ -12,6 +14,7 @@ private:
     double balance;
     static constexpr double interestRate = 0.05;  // Annual interest rate (5%)
     static int accountsNumber;  // Static variable to store number of accounts
+    static std::vector<BankAccount*> users; // Static vector to store pointers to BankAccount objects
 
 public:
     // Constructor
@@ -19,12 +22,18 @@ public:
         : ownerName(name), balance(initialBalance) {
             accountNumber = generateAccountNumber(); // Assign unique account number
             accountsNumber++;
+            users.push_back(this);
         }
 
-    // destructor
-    ~BankAccount() {--accountsNumber;};
-
-    // Methods
+    // Destructor
+    virtual ~BankAccount() { 
+        --accountsNumber;
+        // Remove this object's pointer from users vector
+        auto it = std::find(users.begin(), users.end(), this);
+        if (it != users.end()) {
+            users.erase(it);
+        }
+    }
 
     // Static method to generate random account numbers
     static long generateAccountNumber() {
@@ -54,6 +63,12 @@ public:
 
     void applyInterest() {
         balance *= (1 + interestRate);
+    }
+
+    static void applyInterestToAll() {
+        for (auto user : users) {
+            user->applyInterest();
+        }
     }
 
     bool transferTo(BankAccount& destination, double amount) {
@@ -87,6 +102,11 @@ public:
         return (ownerName == other.ownerName && accountNumber == other.accountNumber);
     }
 
+    // Static member function to access accountsNumber
+    static int getAccountsNumber() {
+        return accountsNumber;
+    }
+
     // Friend function to overload <<
     friend std::ostream& operator<<(std::ostream& os, const BankAccount& account) {
         os << "Account Owner: " << account.ownerName << std::endl;
@@ -96,15 +116,51 @@ public:
     }
 };
 
-
+// Definition of static members outside the class
 int BankAccount::accountsNumber = 0;
+std::vector<BankAccount*> BankAccount::users;
 
+
+
+// Derived class SpecialBankAccount
+class SpecialBankAccount : public BankAccount {
+private:
+    static constexpr double interestRate = 0.12;
+    static int accountsNumber;
+    static std::vector<SpecialBankAccount*> users;  // Static vector to store pointers to SpecialBankAccount objects
+
+public:
+    SpecialBankAccount(const std::string& name, double initialBalance)
+        : BankAccount(name, initialBalance) {
+        ++accountsNumber;
+        users.push_back(this);  // Push pointer to current object into users vector
+    }
+
+    virtual ~SpecialBankAccount() {
+        --accountsNumber;
+        // Remove this object's pointer from users vector
+        auto it = std::find(users.begin(), users.end(), this);
+        if (it != users.end()) {
+            users.erase(it);
+        }
+    }
+
+    // Static member function to access accountsNumber
+    static int getAccountsNumber() {
+        return accountsNumber;
+    }
+};
+
+// Definition of static members outside the class
+int SpecialBankAccount::accountsNumber = 0;
+std::vector<SpecialBankAccount*> SpecialBankAccount::users;
 
 
 int main() {
     // Create BankAccount objects
     BankAccount acc1("John Doe", 1000.0);
     BankAccount acc2("Jane Smith", 500.0);
+    SpecialBankAccount sAcc("aaa", 1200.0);
 
     // Perform operations
     acc1.deposit(200.0);
@@ -133,7 +189,14 @@ int main() {
     std::cout << acc3 << std::endl;
 
     // Equality comparison
-    std::cout << "Account 1 and Account 2 have are" << (acc1 == acc2 ? " the same"
-: " different") << '.';
+    std::cout << "Account 1 and Account 2 are" << (acc1 == acc2 ? " the same" : " different") << '.' << std::endl;
+
+    // Output accountsNumber from both classes
+    std::cout << "Total BankAccounts: " << BankAccount::getAccountsNumber() << std::endl;
+    std::cout << "Total SpecialBankAccounts: " << SpecialBankAccount::getAccountsNumber() << std::endl;
+
+    BankAccount::applyInterestToAll();
+
+
     return 0;
 }
