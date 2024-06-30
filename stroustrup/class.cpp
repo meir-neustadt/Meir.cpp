@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
-// #include "meir@cpp.h"
+#include <stdexcept>
+#include <initializer_list>
 
 using namespace std;
 
@@ -8,7 +9,7 @@ class Vector
 {
 public:
     Vector(int s) : elem{new float[s]}, sz(s) {}
-    Vector(initializer_list<float> el) : elem{new float[el.size()]}, sz{el.size()}
+    Vector(initializer_list<float> el) : elem{new float[el.size()]}, sz{static_cast<int>(el.size())}
     {
         copy(el.begin(), el.end(), elem);
     }
@@ -22,7 +23,7 @@ public:
             throw out_of_range{"Vector::operator[]"};
         return elem[i];
     }
-    int size() { return sz; }
+    int size() const { return sz; } // Marked as const
 
 private:
     float *elem; // pointer to the elements
@@ -34,7 +35,7 @@ class Container
 public:
     virtual float &operator[](int) = 0;
     virtual int size() const = 0;
-    virtual ~Container(){};
+    virtual ~Container() {}
 };
 
 void use(Container &c)
@@ -42,18 +43,19 @@ void use(Container &c)
     const int sz = c.size();
     for (int i = 0; i != sz; ++i)
         cout << c[i] << '\t';
-};
+    cout << endl;
+}
 
 class conVector : public Container
 {
     Vector v;
 
 public:
-    conVector(int s) : v(s){};
-    conVector(initializer_list<float> el) : v(el){};
-    ~conVector(){};
-    float &operator[](int i) { return v[i]; };
-    int size() const { return 11; }
+    conVector(int s) : v(s) {}
+    conVector(initializer_list<float> el) : v(el) {}
+    ~conVector() {}
+    float &operator[](int i) { return v[i]; }
+    int size() const { return v.size(); }
 };
 
 class conList : public Container
@@ -61,9 +63,9 @@ class conList : public Container
     vector<float> v;
 
 public:
-    conList(){};
-    conList(initializer_list<float> el) : v(el){};
-    ~conList(){};
+    conList() {}
+    conList(initializer_list<float> el) : v(el) {}
+    ~conList() {}
     float &operator[](int i)
     {
         for (auto &x : v)
@@ -73,9 +75,8 @@ public:
             --i;
         }
         throw out_of_range("List container");
-        return v[i];
-    };
-    int size() const { return 10; }
+    }
+    int size() const { return static_cast<int>(v.size()); }
 };
 
 void example()
@@ -84,13 +85,10 @@ void example()
     conList cl{1, 2, 3, 4, 5, 6, 7, 8, 9};
     use(cv);
     use(cl);
-};
+}
 
 namespace myCode
 {
-    // int& operator+(int n1, int n2){
-    //     return n1+n2;
-    // }
     int a = 10;
 }
 
@@ -113,77 +111,114 @@ public:
 class Circle : public Shape
 {
 public:
-    Circle(Point p, int r); // constructor
-    ~Circle();
-    Point center() const { return center; }
-    void move(Point to) { center = to; }
-    void draw() const;
-    void rotate(int) {}
+    Circle(Point p, int r) : center_{p}, radius_{r} {} // constructor
+    ~Circle() {}
+    Point center() const override { return center_; }
+    void move(Point to) override { center_ = to; }
+    void draw() const override { cout << "Drawing Circle at (" << center_.x << ", " << center_.y << ") with radius " << radius_ << endl; }
+    void rotate(int) override {}
 
 private:
-    Point center;
-    int radius;
+    Point center_;
+    int radius_;
 };
 
 class Smiley : public Circle
 { // use the circle as the base for a face
 public:
-    Smiley(Point p, int r) : Circle{p, r}, mouth{nullptr} {};
-    ~Smiley()
+    Smiley(Point p, int r) : Circle{p, r}, mouth{nullptr} {}
+    ~Smiley() override
     {
         delete mouth;
         for (auto p : eyes)
             delete p;
     }
-    void move(Point to);
-    void draw() const;
-    void rotate(int);
-    void add_eye(Shape∗ s) { eyes.push_back(s); }
-    void set_mouth(Shape∗ s);
-    virtual void wink(int i); // wink eye number i
+    void move(Point to) override
+    {
+        Circle::move(to);
+        for (auto p : eyes)
+            p->move(to);
+    }
+    void draw() const override
+    {
+        Circle::draw();
+        for (auto p : eyes)
+            p->draw();
+        if (mouth) {
+            mouth->draw();
+        }
+    }
+    void rotate(int angle) override
+    {
+        for (auto p : eyes)
+            p->rotate(angle);
+        if (mouth) {
+            mouth->rotate(angle);
+        }
+    }
+    void add_eye(Shape* s) { eyes.push_back(s); }
+    void set_mouth(Shape* s) { mouth = s; }
+    void wink(int i); // wink eye number i
+
 private:
-    vector<Shape∗> eyes; // usually two eyes
-    Shape∗ mouth;
+    vector<Shape*> eyes; // usually two eyes
+    Shape* mouth;
 };
 
-void Smiley::draw()
+void Smiley::wink(int i)
 {
-    Circle::draw();
-    for (auto p : eyes)
-        p−> draw();
-    mouth−> draw();
+    if (i < eyes.size())
+    {
+        cout << "Winking eye " << i << endl;
+    }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char* argv[])
 {
-    int a = 5;
     try
     {
         example();
-        Vector v(atoi(argv[1]));
+        Vector v(2);
         Vector vc = {2.345, 5.678};
         vc[0] = .345;
         v[1] = 5.789;
         try
         {
-            v[8] = 7;
+            v[8] = 7; // This will cause an out_of_range exception
         }
-        catch (out_of_range &e)
+        catch (out_of_range& e)
         {
             cout << e.what() << '\n';
         }
 
-        using namespace myCode;
-        cout << v[1] << '\n'
-             << vc[0] << '\n'
-             << a << '\n'
-             << myCode::a;
+        // Demonstrate Shape hierarchy
+        Point p1{0, 0};
+        Circle c1(p1, 5);
+        c1.draw();
+
+        Smiley s1(p1, 10);
+        Point p2{10, 10};
+        Circle* eye1 = new Circle(p2, 1);
+        s1.add_eye(eye1);
+        Point p3{20, 10};
+        Circle* eye2 = new Circle(p3, 1);
+        s1.add_eye(eye2);
+
+        Point p4{15, 20};
+        Circle* mouth = new Circle(p4, 3);
+        s1.set_mouth(mouth);
+
+        s1.draw();
+        s1.wink(0);
+        s1.wink(1);
+        s1.move(Point{30, 30});
+        s1.draw();
     }
-    catch (length_error &e)
+    catch (length_error& e)
     {
         cout << e.what() << '\n';
     }
-    catch (bad_alloc &e)
+    catch (bad_alloc& e)
     {
         cout << e.what() << '\n';
     }
