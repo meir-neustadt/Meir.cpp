@@ -149,6 +149,12 @@ public:
     static int getAccountsNumber() {
         return accountsNumber;
     }
+
+    static void applyInterestToAll() {
+        for (auto user : users) {
+            user->applyInterest();
+        }
+    }
 };
 
 // Definition of static members outside the class
@@ -160,7 +166,7 @@ int main() {
     // Create BankAccount objects
     BankAccount acc1("John Doe", 1000.0);
     BankAccount acc2("Jane Smith", 500.0);
-    SpecialBankAccount sAcc("aaa", 1200.0);
+    SpecialBankAccount sAcc("AAA", 1200.0);
 
     // Perform operations
     acc1.deposit(200.0);
@@ -195,8 +201,24 @@ int main() {
     std::cout << "Total BankAccounts: " << BankAccount::getAccountsNumber() << std::endl;
     std::cout << "Total SpecialBankAccounts: " << SpecialBankAccount::getAccountsNumber() << std::endl;
 
+    // Apply interest to all accounts
     BankAccount::applyInterestToAll();
 
+    // Display account details after applying interest to all
+    std::cout << "Account 1 after applying interest to all:" << std::endl;
+    std::cout << acc1 << std::endl;
+
+    std::cout << "Account 2 after applying interest to all:" << std::endl;
+    std::cout << acc2 << std::endl;
+
+    std::cout << "Special Account after applying interest to all:" << std::endl;
+    std::cout << sAcc << std::endl;
+
+    // Apply interest to special accounts
+    SpecialBankAccount::applyInterestToAll();
+    
+    std::cout << "Special Account after applying interest:" << std::endl;
+    std::cout << sAcc << std::endl;
 
     return 0;
 }
