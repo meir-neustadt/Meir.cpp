@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include "bank.h"
+#include "speBank.h"
 
 
 int main() {
