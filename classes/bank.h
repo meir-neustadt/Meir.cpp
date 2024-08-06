@@ -27,18 +27,18 @@ public:
 
     // Destructor
     virtual ~BankAccount() { 
-        --accountsNumber;
         // Remove this object's pointer from users vector
         auto it = std::find(users.begin(), users.end(), this);
         if (it != users.end()) {
             users.erase(it);
+            --accountsNumber;
         }
     }
 
     // Static methods
 
     static long generateAccountNumber() {
-        std::srand(static_cast<unsigned int>(std::time(nullptr))); // Seed for random number generation
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
         return MIN_ACCOUNT_NUMBER + std::rand() % (MAX_ACCOUNT_NUMBER - MIN_ACCOUNT_NUMBER + 1);
     }
 

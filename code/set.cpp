@@ -41,15 +41,15 @@ int combinations(int n, int k) {
 
 long long subSets(int elements){
     // sets initializes with null set, and with n set if exist
-    long long sets = elements ? 2 : 1;
+    long long subsets = elements ? 2 : 1;
 
     int halfElems = (elements-1)/2;
     int elemsInCombination = 1;
 
     while (elemsInCombination <= halfElems){
-        sets += combinations(elements, elemsInCombination++) * 2;
+        subsets += combinations(elements, elemsInCombination++) * 2;
     };
-    if (elements%2==0) sets += combinations(elements, elemsInCombination);
+    if (elements%2==0) subsets += combinations(elements, elemsInCombination);
 
-    return sets; 
+    return subsets; 
 }
