@@ -7,4 +7,4 @@
 #define printL(a) { std::cout << (a) << std::endl; }
 #define printT(a) { std::cout << (a) << st; }
 
-int counter {0};
+int counter {0}

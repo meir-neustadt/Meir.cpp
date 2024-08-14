@@ -25,3 +25,5 @@ int main() {
     std::cout << Max(3.456,7/2.0);
     printL(333);
 }
+
+cat* ca = dinamic_cast<cat*> (anim) ;
